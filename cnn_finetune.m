@@ -1,10 +1,11 @@
 function [net, info] = cnn_finetune(datasetName, varargin)
-
+run(fullfile(fileparts(mfilename('fullpath')), ...
+  '..', '..', 'matlab', 'vl_setupnn.m')) ;
 opts.expDir     = fullfile('data','exp') ;
 opts.baseNet    = 'imagenet-matconvnet-vgg-m';
 opts.numEpochs  = [5 5 10]; 
 opts.numFetchThreads = 12 ;
-opts.imdb       = [];
+opts.imdb       = load('data\imdb.mat') ;
 opts.includeVal = false; 
 opts.aug        = 'stretch'; 
 opts.border     = 0; 
@@ -42,7 +43,7 @@ net = cnn_finetune_init(imdb,opts.baseNet);
 % -------------------------------------------------------------------------
 %                                                                     Learn
 % -------------------------------------------------------------------------
-trainable_layers = find(cellfun(@(l) isfield(l,'weights'),net.layers)); 
+trainable_layers = find(cellfun(@(l) isfield(l,'learningRate'),net.layers)); 
 fc_layers = find(cellfun(@(s) numel(s.name)>=2 && strcmp(s.name(1:2),'fc'),net.layers));
 fc_layers = intersect(fc_layers, trainable_layers);
 lr = cellfun(@(l) l.learningRate, net.layers(trainable_layers),'UniformOutput',false); 
@@ -107,7 +108,7 @@ else
 end
 
 if nargout > 0
-  labels = imdb.images.class(batch) ;
+  labels = imdb.images.label(batch) ;
 end
 
 

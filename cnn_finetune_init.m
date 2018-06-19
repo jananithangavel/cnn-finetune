@@ -26,8 +26,8 @@ if ~isfield(net.meta, 'pretrain'),
 end
 net.meta.pretrain = [net.meta.pretrain net.meta];
 net.meta.pretrain{end} = rmfield(net.meta.pretrain{end}, 'pretrain'); 
-net.meta.classes.name = imdb.meta.classes;
-net.meta.classes.description = imdb.meta.classes;
+net.meta.classes.name = imdb.classes.name;
+%net.meta.classes.description = imdb.meta.classes;
 
 [h,w,in,out] = size(net.layers{end-1}.weights{1});
 out = numel(net.meta.classes.name); 
